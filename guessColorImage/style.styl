@@ -67,16 +67,16 @@ for i in range(1, 12)
 	flex-wrap wrap
 .nowrap
 	flex-wrap nowrap
-for dir in Row Column
+for dir in row column
 	.{dir}
-		prop = dir is Row ? 'justify-content' : 'align-items'
+		prop = dir is row ? 'justify-content' : 'align-items'
 		&.start
 			{prop} flex-start
 		&.center
 			{prop} center
 		&.end
 			{prop} flex-end
-		prop = dir is Row ? 'align-items' : 'justify-content'
+		prop = dir is row ? 'align-items' : 'justify-content'
 		&.top
 			{prop} flex-start
 		&.middle
