@@ -1,0 +1,219 @@
+box-orient()
+	-webkit-box-orient arguments
+	box-orient arguments
+font-smoothing()
+	-webkit-font-smoothing arguments
+	font-smoothing arguments
+line-clamp()
+	-webkit-line-clamp arguments
+	line-clamp arguments
+text-security()
+	-webkit-text-security arguments
+	text-security arguments
+user-drag()
+	-webkit-user-drag arguments
+	user-drag arguments
+user-modify()
+	-webkit-user-modify arguments
+	user-modify arguments
+text-truncate(line)
+	if line < 2
+		text-overflow ellipsis
+		white-space nowrap
+		overflow hidden
+	else
+		display -webkit-box
+		line-clamp line
+		box-orient vertical
+		overflow hidden
+body
+	margin 0
+	word-break break-word
+*, *:before, *:after
+	box-sizing border-box
+	vertical-align middle
+
+.row
+	display flex
+	flex-direction row
+	> .col
+		min-width 0
+.column
+	display flex
+	flex-direction column
+	> .col
+		min-height 0
+.col
+	flex-grow 1
+.col-0
+	flex-shrink 0
+for i in range(1, 12)
+	val = floor(i / 12 * 100%, 2)
+	:not(.column) > .col-{i}
+		width val
+	.column > .col-{i}
+		height val
+	.row-{i}
+		display grid
+		grid-template-columns repeat(i, 1fr)
+		> .col-{i}
+			grid-column span (i)
+	.offset-{i}
+		margin-right val
+.full
+	position absolute
+	inset 0
+.wrap
+	flex-wrap wrap
+.nowrap
+	flex-wrap nowrap
+for dir in Row Column
+	.{dir}
+		prop = dir is Row ? 'justify-content' : 'align-items'
+		&.start
+			{prop} flex-start
+		&.center
+			{prop} center
+		&.end
+			{prop} flex-end
+		prop = dir is Row ? 'align-items' : 'justify-content'
+		&.top
+			{prop} flex-start
+		&.middle
+			{prop} center
+		&.bottom
+			{prop} flex-end
+.between
+	justify-content space-between
+.around
+	justify-content space-around
+.evenly
+	justify-content space-evenly
+.stretch
+	align-items stretch
+props = {p: padding, m: margin}
+sides = {t: top, r: right, b: bottom, l: left}
+sizes = 32px 16px 8px 4px 2px 0
+for p, prop in props
+	for size, i in sizes
+		i = 5 - i
+		negate = p is 'm' and i
+		.{p}-{i}
+			{prop} size
+		if negate
+			.-{p}-{i}
+				{prop} -(size)
+		.{p}x-{i}
+			{prop}-left size
+			{prop}-right size
+		.{p}y-{i}
+			{prop}-top size
+			{prop}-bottom size
+		if negate
+			.-{p}x-{i}
+				{prop}-left -(size)
+				{prop}-right -(size)
+			.-{p}y-{i}
+				{prop}-top -(size)
+				{prop}-bottom -(size)
+		for s, side in sides
+			.{p}{s}-{i}
+				{prop}-{side} size
+			if negate
+				.-{p}{s}-{i}
+					{prop}-{side} -(size)
+for size, i in sizes
+	i = 5 - i
+	.gap-{i}
+		gap size
+	.gap-x-{i}
+		column-gap size
+	.gap-y-{i}
+		row-gap size
+for pos in absolute relative fixed
+	.{pos}
+		position pos
+for size in 100 75 50 25 0
+	.w-{size}
+		width (size)%
+	.h-{size}
+		height (size)%
+props = {w: width, h: height}
+for p, prop in props
+	for type in fit min max
+		.{p}-{type}
+			{prop} (type)-content
+for i in 0..5
+	.z-{i}
+		z-index i
+	if i
+		.-z-{i}
+			z-index -(i)
+for dsp in block inline-block inline flex inline-flex
+	.{dsp}
+		display dsp
+.hidden, [hidden]
+	display none
+for align in left center right
+	.text-{align}
+		text-align align
+.text-baseline
+	vertical-align baseline
+.text-bold
+	font-weight bold
+.text-italic
+	font-style italic
+.text-wrap
+	white-space normal
+.text-nowrap
+	white-space nowrap
+.text-pre-wrap
+	white-space pre-wrap
+.text-pre
+	white-space pre
+.text-truncate
+	text-truncate 1
+.text-truncate-2
+	text-truncate 2
+.text-truncate-3
+	text-truncate 3
+.text-select
+	user-select auto
+.text-noselect
+	user-select none
+.text-select-all
+	user-select all
+.text-security
+	text-security square
+.text-small, small
+	font-size 10pt
+.scroll
+	overflow auto
+.scroll-y
+	overflow-x hidden
+	overflow-y auto
+.scroll-overlay
+	overflow overlay
+.scroll-overlay-y
+	overflow-x hidden
+	overflow-y overlay
+.noscroll
+	overflow hidden
+.event
+	pointer-events auto
+.noevent
+	pointer-events none
+.event-childs
+	pointer-events none
+	> *
+		pointer-events auto
+for ratio in (1 1) (4 3) (3 2) (5 3) (16 9)
+	w = ratio[0]
+	h = ratio[1]
+	.ratio-{w}x{h}
+		aspect-ratio w\/h
+for fit in cover contain scale-down fill none
+	.img-{fit}
+		object-fit fit
+.img-contrast
+	image-rendering -webkit-optimize-contrast
