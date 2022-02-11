@@ -1,0 +1,199 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: LiveScript 2
+comment: "LiveScript Syntax: version 2"
+file_extensions:
+  - ls2
+first_line_match: ^#!.*\bls
+scope: source.livescript
+variables:
+  ident: '[a-zA-Z_$][a-zA-Z0-9_$]*'
+  digit: \d+(\.\d+)?([eE][-+]?\d+)?
+  bs: (?<=^|[^a-zA-Z0-9_$@&.)\]}"'?!])
+  be: (?=$|[^a-zA-Z0-9_$])
+  asop: |
+    (?x)\??(
+      \.(>>>?|<<|[&|^])\.|
+      \+\+|\*\*|%%|&&|\|\||and|x?or|
+      [+\-*/%^:.]|
+    )=(?!=)
+contexts:
+  main:
+    - include: basic
+
+  basic:
+    - match: '{{bs}}class{{be}}'
+      scope: keyword
+      push:
+        - meta_content_scope: entity.other.attribute-name
+        - match: ' (extends){{be}}'
+          captures:
+            1: keyword
+          push:
+            - clear_scopes: true
+            - match: '({{ident}})(?=$| implements{{be}})'
+              captures:
+                1: entity.other.attribute-name
+            - match: ' (implements){{be}}'
+              captures:
+                1: keyword
+              pop: 2
+            - match: $
+              pop: 2
+            - include: basic
+        - match: ' (implements){{be}}'
+          captures:
+            1: keyword
+          pop: 1
+        - match: $
+          pop: 1
+    - match: |
+        (?x){{bs}}(
+          if|unless|else|switch|case|when|default|
+          for|while|until|loop|ever|from|to|in|of|by|
+          try|catch|finally|throw|
+          break|continue|fallthrough|return|
+          var|const|let|with|await|do|then|
+          new|typeof|instanceof|and|or|xor|not|is|isnt
+        ){{be}}
+      scope: keyword
+    - match: |
+        (?x){{bs}}(
+          yes|no|true|false|on|off|
+          void|null|NaN|Infinity
+        ){{be}}
+      scope: constant.language
+    - match: |
+        (?x){{bs}}(
+          this|that|arguments
+        ){{be}}
+      scope: storage.type
+    - match: \\\S[^\s,;)\]}]*
+      scope: string
+    - match: \"
+      push: double-string
+    - match: \'
+      push: single-string
+    - match: /\*
+      push: block-comment
+    - match: '#'
+      push: inline-comment
+    - match: '\b{{digit}}\b'
+      scope: constant.numeric
+    - match: (?=\()
+      branch_point: paren
+      branch:
+        - group
+        - arrow-func
+    - match: (?=\[)
+      branch_point: bracket
+      branch:
+        - array
+        - destruct-array
+    - match: (?=\{)
+      branch_point: brace
+      branch:
+        - object
+        - destruct-object
+    - match: '!?[-~]>'
+      scope: storage.type
+    - match: '\.\.\.|::|&&|\|\||\.=|[-+*/%^=?!<>]'
+      scope: keyword.operator
+    - match: '&'
+      scope: storage.type
+    - match: \)
+      scope: invalid
+
+  double-string:
+    - meta_scope: string
+    - match: \\.
+    - match: '#{'
+      scope: string
+      push: interpolate
+    - match: \"
+      pop: true
+
+  interpolate:
+    - clear_scopes: true
+    - match: \}
+      scope: string
+      pop: true
+    - include: main
+
+  single-string:
+    - meta_scope: string
+    - match: \\.
+    - match: \'
+      pop: true
+
+  block-comment:
+    - meta_scope: comment
+    - match: '\*/'
+      pop: true
+
+  inline-comment:
+    - meta_scope: comment
+    - match: $
+      pop: true
+
+  group:
+    - match: \(
+      scope: punctuation
+      push:
+        - match: \) !?[-~]>
+          fail: paren
+        - match: \)
+          scope: punctuation
+          pop: 2
+        - include: basic
+
+  arrow-func:
+    - match: \(
+      scope: punctuation
+      push:
+        - match: (\)) (?=!?[-~]>)
+          captures:
+            1: punctuation
+          pop: 2
+        - include: basic
+
+  array:
+    - match: \[
+      scope: punctuation
+      push:
+        - match: \]\??\s+{{asop}}
+          fail: bracket
+        - match: \]
+          scope: punctuation
+          pop: 2
+        - include: basic
+
+  destruct-array:
+    - match: \[
+      scope: keyword.declaration
+      push:
+        - match: \]
+          scope: keyword.declaration
+          pop: 2
+        - include: basic
+
+  object:
+    - match: \{
+      scope: punctuation
+      push:
+        - match: \}\??\s+{{asop}}
+          fail: brace
+        - match: \}
+          scope: punctuation
+          pop: 2
+        - include: basic
+
+  destruct-object:
+    - match: \{
+      scope: keyword.declaration
+      push:
+        - match: \}
+          scope: keyword.declaration
+          pop: 2
+        - include: basic
