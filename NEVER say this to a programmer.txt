@@ -1,0 +1,15 @@
+﻿NEVER say this to a programmer:
+
+Hey! Your code has bugs!
+
+He or she will immediately respond:
+
+No! You must have pressed wrong buttons!
+
+INSTEAD you should say this:
+
+Hey! Your code cannot satisfy the requirements!
+
+Then the response will be:
+
+What??? There must be a bug! I will fix it!
